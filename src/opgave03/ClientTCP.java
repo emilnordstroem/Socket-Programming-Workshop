@@ -13,27 +13,23 @@ public class ClientTCP {
     private static BufferedReader inFromServer;
 
     public static void main(String[] args) {
-        try {
-            Socket clientSocket = new Socket("10.10.138.49", 10_000);
-            outToServer = new DataOutputStream(
-                    clientSocket.getOutputStream()
-            );
-            inFromServer = new BufferedReader(
-                    new InputStreamReader(
-                            clientSocket.getInputStream()
-                    )
-            );
+        String inputMessage = initialConnection();
+        connectToServer(inputMessage, 10_000);
 
-            Thread writeThread = new Thread( () -> writeToServer());
-            Thread readThread = new Thread(() -> readFromServer());
+        String responseFromDNS = requestDNS();
+        connectToServer(responseFromDNS, 10_001);
 
-            writeThread.start();
-            readThread.start();
-        } catch (UnknownHostException e){
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Thread writeThread = new Thread( () -> writeToServer());
+        Thread readThread = new Thread(() -> readFromServer());
+
+        writeThread.start();
+        readThread.start();
+    }
+
+    private static String initialConnection(){
+        Scanner initialConnection = new Scanner(System.in);
+        System.out.print("DNS Server IP Address: ");
+        return initialConnection.nextLine().trim();
     }
 
     private static void writeToServer(){
@@ -61,6 +57,48 @@ public class ClientTCP {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private static void connectToServer(String ipAddress, int port){
+        try {
+            Socket clientSocket = new Socket(ipAddress, port);
+            outToServer = new DataOutputStream(
+                    clientSocket.getOutputStream()
+            );
+            inFromServer = new BufferedReader(
+                    new InputStreamReader(
+                            clientSocket.getInputStream()
+                    )
+            );
+        } catch (UnknownHostException e){
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String requestDNS(){
+        System.out.print("Request to DNS: ");
+        Scanner clientInput = new Scanner(System.in);
+        String replyFromServer;
+
+        while (true) {
+            String commandToDNS = clientInput.nextLine();
+            String[] splitedCommandToDNS = commandToDNS.toLowerCase().split(" ");
+            try {
+                outToServer.writeBytes(commandToDNS + '\n');
+                replyFromServer = inFromServer.readLine();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (splitedCommandToDNS[0].equals("connect")) {
+                break;
+            }
+            System.out.println(replyFromServer);
+        }
+
+        return replyFromServer;
     }
 
 }

@@ -10,13 +10,12 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ServerTCP {
-    private static Socket connectionSocket;
     private static BufferedReader inFromClient;
     private static DataOutputStream outToClient;
 
     public static void main(String[] args) {
         try (ServerSocket welcomeSocket = new ServerSocket(10_000)) {
-            connectionSocket = welcomeSocket.accept();
+            Socket connectionSocket = welcomeSocket.accept();
             System.out.println("[Client connected to Server from IP: " + connectionSocket.getInetAddress() + "]");
 
             inFromClient = new BufferedReader(
