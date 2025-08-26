@@ -1,4 +1,4 @@
-package opgave02;
+package opgave03;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
