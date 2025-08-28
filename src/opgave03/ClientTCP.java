@@ -17,6 +17,7 @@ public class ClientTCP {
 
 //        String responseFromDNS = requestDNS_TCP();
         String responseFromDNS = requestDNS_UDP(inputMessage, 10_000);
+        System.out.println("responseFromDNS: " + responseFromDNS);
         connectToServer(responseFromDNS, 10_001);
 
         Thread writeThread = new Thread(() -> writeToServer());
@@ -63,26 +64,35 @@ public class ClientTCP {
             Scanner inputFromClient = new Scanner(System.in);
             String requestToDNS;
             DatagramPacket packet;
-            byte[] byteArray = new byte[1024];
-            String responseFromDNS = "";
+
+            byte[] sendToDNS;
+            byte[] receiveFromDNS;
+            String responseFromDNS;
 
             while(true){
+                sendToDNS = new byte[1024];
+                receiveFromDNS = new byte[1024];
+
                 requestToDNS = inputFromClient.nextLine();
-                byteArray = requestToDNS.getBytes();
+                String[] splittedRequest = requestToDNS.toLowerCase().split(" ");
+                sendToDNS = requestToDNS.getBytes();
+
                 packet = new DatagramPacket(
-                        byteArray,
-                        byteArray.length,
+                        sendToDNS,
+                        sendToDNS.length,
                         InetAddress.getByName(ipAddress),
                         port
                 );
                 clientSocket.send(packet);
-                byteArray = new byte[1024];
 
+                packet = new DatagramPacket(
+                        receiveFromDNS,
+                        receiveFromDNS.length
+                );
                 clientSocket.receive(packet);
                 responseFromDNS = new String(packet.getData()).trim();
-                String[] splittedResponseFromDNS = responseFromDNS.toLowerCase().split(" ");
 
-                if (splittedResponseFromDNS[0].equals("connect")) {
+                if (splittedRequest[0].equals("connect")) {
                     break;
                 }
                 System.out.println(responseFromDNS);
