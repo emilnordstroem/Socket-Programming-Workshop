@@ -33,15 +33,15 @@ public class NamingServerTCP {
                 );
 
                 while (true) {
-                    String commandToClient = inFromClient.readLine().toLowerCase();
-                    String[] splitedCommand = commandToClient.split(" ");
+                    String commandFromClient = inFromClient.readLine().toLowerCase();
+                    String[] splittedCommand = commandFromClient.split(" ");
                     String messageToClient = "";
-                    switch (splitedCommand[0]) {
+                    switch (splittedCommand[0]) {
                         case "connect":
-                            messageToClient = getIPAddress(splitedCommand[1]);
+                            messageToClient = getIPAddress(splittedCommand[1]);
                             break;
                         case "add":
-                            messageToClient = addToServerList(splitedCommand[1], splitedCommand[2]);
+                            messageToClient = addToServerList(splittedCommand[1], splittedCommand[2]);
                             break;
                         case "list":
                             messageToClient = returnServerList();
@@ -51,7 +51,7 @@ public class NamingServerTCP {
                     }
 
                     outFromDNS.writeBytes(messageToClient + '\n');
-                    if (splitedCommand[0].equals("connect")) {
+                    if (splittedCommand[0].equals("connect")) {
                         break;
                     }
                 }
