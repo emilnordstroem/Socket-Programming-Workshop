@@ -13,10 +13,10 @@ public class ClientTCP {
 
     public static void main(String[] args) {
         String inputMessage = initialConnection();
-//        connectToServer(inputMessage, 10_000);
+        connectToServer(inputMessage, 10_000);
 
-//        String responseFromDNS = requestDNS_TCP();
-        String responseFromDNS = requestDNS_UDP(inputMessage, 10_000);
+        String responseFromDNS = requestDNS_TCP();
+//        String responseFromDNS = requestDNS_UDP(inputMessage, 10_000);
         System.out.println("responseFromDNS: " + responseFromDNS);
         connectToServer(responseFromDNS, 10_001);
 

@@ -14,7 +14,7 @@ public class ClientTCP {
 
     public static void main(String[] args) {
         try {
-            Socket clientSocket = new Socket("10.10.138.49", 10_000);
+            Socket clientSocket = new Socket("localhost", 10_000);
             outToServer = new DataOutputStream(
                     clientSocket.getOutputStream()
             );
